@@ -4,6 +4,7 @@ import util.Random
 import org.scalatest.FlatSpec
 import org.scalatest.matchers.ShouldMatchers
 import gorillas.collection.generic.KeyTransformation
+import gorillas.scalatest.Tags
 
 /**
  * Non-deterministic tests used to make sure that the Map and the builder doesn't blow up the memory when storing big quantities of data.
@@ -22,7 +23,7 @@ class NavigableMapMemorySpecs extends FlatSpec with ShouldMatchers {
   /**
    * The following test requires -Xmx512mb
    */
-  "NavigableMapBuilder" should "be able to hold 10,000,000 (random) objects without running out of memory" in {
+  "NavigableMapBuilder" should "be able to hold 10,000,000 (random) objects without running out of memory" taggedAs(Tags.Memory) in {
     val randomGenerator: Random = new Random(347)
     val navigableBuilder = NavigableMap.newBuilder[Int, String]
     var i = 0

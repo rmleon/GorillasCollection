@@ -4,6 +4,7 @@ import org.scalatest.FunSpec
 import org.scalatest.matchers.ShouldMatchers
 import util.Random
 import compat.Platform
+import gorillas.scalatest.Tags
 
 /**
  * Non-deterministic tests used as a guideline to determine when I'm making progress.
@@ -23,7 +24,7 @@ class SortingPerformanceSpecs extends FunSpec with ShouldMatchers {
   }
 
   describe("Sorting.mergeSort") {
-    it("should find the optimal size at which insertion sort is slower than merge sort") {
+    it("should find the optimal size at which insertion sort is slower than merge sort", Tags.Performance) {
       val repetitions = 100000
       var firstDifference = 0
       for (i <- 1 until 20) {

@@ -6,6 +6,7 @@ import scala.collection.mutable.ArrayBuffer
 import org.scalatest.FlatSpec
 import org.scalatest.matchers.ShouldMatchers
 import scala.collection.mutable
+import gorillas.scalatest.Tags
 
 /**
  * Non-deterministic test to make sure that the map performs at least as well as the Scala maps
@@ -20,9 +21,9 @@ class NavigableMapPerformanceSpecs extends FlatSpec with ShouldMatchers {
     def transform(x: Key) = x
   }
 
-  "A single-entry NavigableMap" should "perform as fast (with a 10% error margin) as immutable.Map when retrieving the element 10 million times" in perfTest(1, 13, 10000000, 10)
+  "A single-entry NavigableMap" should "perform as fast (with a 10% error margin) as immutable.Map when retrieving the element 10 million times" taggedAs (Tags.Performance) in perfTest(1, 13, 10000000, 10)
 
-  it should "perform as fast as the normal empty map (with a 10% error margin) when doing 100 million iterations" in {
+  it should "perform as fast as the normal empty map (with a 10% error margin) when doing 100 million iterations" taggedAs (Tags.Performance) in {
     val repetitions = 100000000
     // System.gc() // Start with a clean slate
     val deltaNormal = runTestOne(repetitions)
@@ -32,9 +33,9 @@ class NavigableMapPerformanceSpecs extends FlatSpec with ShouldMatchers {
     assert(deltaNormal * 1.1 >= deltaNavigable, "Single-entry Navigation map was not faster (normal was %d vs. Navigable %d)".format(deltaNormal, deltaNavigable))
   }
 
-  "A NavigableMap" should "outperform immutable.Maps when reading 500k objects 10 times each " in perfTest(500000, 41, 10)
+  "A NavigableMap" should "outperform immutable.Maps when reading 500k objects 10 times each " taggedAs (Tags.Performance) in perfTest(500000, 41, 10)
 
-  "A NavigableMapBuilder" should "outperform Map.Builder when creating 500k objects" in testBuilders(500000)
+  "A NavigableMapBuilder" should "outperform Map.Builder when creating 500k objects" taggedAs (Tags.Performance) in testBuilders(500000)
 
   def perfTest(trials: Int, seed: Int, repetitions: Int, marginErrorPercentage: Int = 0) {
     val randomGenerator: Random = new Random(seed)

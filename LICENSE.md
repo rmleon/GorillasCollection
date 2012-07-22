@@ -1,7 +1,7 @@
 Gorillas Collection License
 ===========================
 
-Copyright {{{&copy;}}} 2012, Ricardo Le&oacute;n
+Copyright &copy; 2012, Ricardo Le&oacute;n
 
 All rights reserved.
 

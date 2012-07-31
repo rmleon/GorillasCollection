@@ -3,6 +3,7 @@ package gorillas.collection.immutable
 import annotation.tailrec
 import gorillas.collection.generic.KeyTransformation
 import collection.{SortedMap, mutable}
+import compat.Platform
 
 /**
  * Very fast access NavigableMap with low footprint.
@@ -183,15 +184,15 @@ final class SortedArrayMap[K, V](private[this] val sortedKeys: Array[K],
    * @return a new map with the element added
    */
   final def +[V1 >: V : ClassManifest](kv: (K, V1)): NavigableMap[K, V1] = {
-    //    val keyIndex = getClosestIndex(kv._1)
-    //    if (keyIndex >= 0)
-    //    if (keyIndex >= 0 && keyIndex < sizeInt && sortedValues(keyIndex) == kv._2 && sortedKeys(keyIndex) == kv._1) {
-    //
-    //    } else {
-    //
-    // TODO: This can be optimized by putting the new element in it's right position
+
+    var insertionIndex = getClosestIndex(kv._1)
+    while (insertionIndex < sizeInt && ordering.equiv(kv._1, sortedKeys(insertionIndex)))
+      insertionIndex += 1
+
+    val arrayInstanceOfV1 = sortedValues.asInstanceOf[Array[V1]]
     val builder = NavigableMap.newBuilder[K, V1]
-    builder ++=(sortedKeys, sortedValues.asInstanceOf[Array[V1]]) += kv
+    builder.sizeHint(sizeInt + 1)
+    builder ++= (sortedKeys, arrayInstanceOfV1, 0, insertionIndex) += kv ++= (sortedKeys, arrayInstanceOfV1, insertionIndex, sizeInt - insertionIndex)
     builder result()
   }
 
@@ -368,7 +369,7 @@ final class SortedArrayMap[K, V](private[this] val sortedKeys: Array[K],
    * @param key lookup key
    * @param minIdx initial index in the range (exclusive).  To include the first element with index 0, pass -1.  Assertion: -1 <= minIdx <= maxIdx
    * @param maxIdx last index in the range (inclusive). Assertion: 0 <= maxIdx < length
-   * @return the closest entry it could find
+   * @return the closest entry it could find.  minIdx <= returnValue <= maxIdx
    */
   @tailrec private[this] final def binarySearchClosest(key: K, minIdx: Int, maxIdx: Int): Int = {
     //    assert(minIdx <= maxIdx, "Error: minIdx <= maxIdx always")

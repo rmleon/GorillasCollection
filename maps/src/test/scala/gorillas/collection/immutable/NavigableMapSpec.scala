@@ -6,6 +6,7 @@ import org.scalatest.matchers.ShouldMatchers
 import scala.collection.mutable.ArrayBuffer
 import util.Random
 import gorillas.collection.generic.KeyTransformation
+import collection.SortedMap
 
 /**
  * @author Ricardo Leon
@@ -233,7 +234,7 @@ class NavigableMapSpec extends FlatSpec with ShouldMatchers {
   "SingleNavigableMap" should "returns only the last values for each key" in {
     val builder = NavigableMap.newBuilder[Key, Value]
     builder += ((1, "One"))
-    val map = builder.result
+    val map = builder result()
     expect(1) {
       map.size
     }
@@ -315,6 +316,31 @@ class NavigableMapSpec extends FlatSpec with ShouldMatchers {
     expect(1)(fromEmpty.size)
     expect("Seven")(fromEmpty(7))
   }
+
+  "NavigableMap.+" should "work when appending elements" in {
+    val baseMap = NavigableMap(1 -> "One", 2 -> "Two", 3 -> "Three")
+    val map1 = baseMap + (4 -> "Four")
+    expect(SortedMap(1 -> "One", 2 -> "Two", 3 -> "Three", 4 -> "Four"))(map1)
+  }
+
+  "NavigableMap.+" should "work when prepending elements" in {
+    val baseMap = NavigableMap(2 -> "Two", 3 -> "Three", 4 -> "Four")
+    val map1 = baseMap + (1 -> "One")
+    expect(SortedMap(1 -> "One", 2 -> "Two", 3 -> "Three", 4 -> "Four"))(map1)
+  }
+
+  "NavigableMap.+" should "work when inserting elements" in {
+    val baseMap = NavigableMap(1 -> "One", 3 -> "Three", 4 -> "Four")
+    val map1 = baseMap + (2 -> "Two")
+    expect(SortedMap(1 -> "One", 2 -> "Two", 3 -> "Three", 4 -> "Four"))(map1)
+  }
+
+  "NavigableMap.+" should "work when inserting elements with duplicate keys" in {
+    val baseMap = NavigableMap(1 -> "One", 3 -> "A", 3 -> "B", 3 -> "C", 3 -> "D", 4 -> "Four")
+    val map1 = baseMap + (3 -> "E")
+    expect(SortedMap(1 -> "One", 3 -> "A", 3 -> "B", 3 -> "C", 3 -> "D", 3 -> "E", 4 -> "Four"))(map1)
+  }
+
   it should "handle duplicate values" in {
     val baseMap = NavigableMap(1 -> "One", 2 -> "Two")
     val duplicatedMap = baseMap + (1 -> "ONE")
@@ -394,7 +420,7 @@ class NavigableMapSpec extends FlatSpec with ShouldMatchers {
     expect(rightAnswer)(map1)
   }
 
-  def testWithRandomValues(trials: Int, seed: Int, repetitions: Int) = {
+  def testWithRandomValues(trials: Int, seed: Int, repetitions: Int) {
     val randomGenerator: Random = new Random(seed)
     val testValues = new ArrayBuffer[(Int, String)](trials)
 

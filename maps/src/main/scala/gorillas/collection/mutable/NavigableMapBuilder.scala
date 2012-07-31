@@ -62,10 +62,12 @@ class NavigableMapBuilder[K, V](implicit ordering: Ordering[K], key2int: KeyTran
       this
     }
 
-    def ++=(addArray: Array[A]) = {
-      growSize(addArray.length)
-      Platform.arraycopy(addArray, 0, array, size, addArray.length)
-      size += addArray.length
+    def ++=(source: Array[A]): ResizableArray[A] = ++=(source, 0, source.length)
+
+    @inline final def ++=(source: Array[A], sourceStart: Int, sourceLen: Int) = {
+      growSize(sourceLen)
+      Platform.arraycopy(source, sourceStart, array, size, sourceLen)
+      size += sourceLen
       this
     }
 
@@ -103,6 +105,14 @@ class NavigableMapBuilder[K, V](implicit ordering: Ordering[K], key2int: KeyTran
     sizeHint(ks.size + keys.size + 1)
     keys ++= ks
     values ++= vs
+    this
+  }
+
+  def ++=(ks: Array[K], vs: Array[V], sourceStart: Int, sourceLen: Int): this.type = {
+    require(ks.size == vs.size, "Keys and values must have the same size")
+    require(sourceStart + sourceLen <= ks.length, "sourceStart + sourceLen must be less or equal the arrays length")
+    keys ++= (ks, sourceStart, sourceLen)
+    values ++= (vs, sourceStart, sourceLen)
     this
   }
 

@@ -101,12 +101,10 @@ class SortingPerformanceSpecs extends FunSpec with ShouldMatchers {
         }
         val endTime6 = System.currentTimeMillis()
 
-
         println("Length: %d\tMS: %d\tQS: %d\tIS: %d, AC: %d, WC: %d, SS: %d".format(i, endTime1 - startTime1, endTime2 - startTime2, endTime3 - startTime3, endTime4 - startTime4, endTime5 - startTime5, endTime6 - startTime6))
       }
 
     }
   }
-
 
 }

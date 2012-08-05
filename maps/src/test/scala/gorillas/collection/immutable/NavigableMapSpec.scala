@@ -25,8 +25,7 @@ class NavigableMapSpec extends FlatSpec with ShouldMatchers {
       (3 -> "Three"),
       (4 -> "Four"),
       (5 -> "Five"),
-      (6 -> "Six")
-    )
+      (6 -> "Six"))
 
   implicit val trans = new KeyTransformation[Key] {
     def transform(x: Key) = x
@@ -50,7 +49,7 @@ class NavigableMapSpec extends FlatSpec with ShouldMatchers {
   it should "handle key misses" in {
     val builder = NavigableMap.newBuilder[Key, Value]
     builder ++= testValues
-    val map = builder result()
+    val map = builder result ()
     assert(map.size == testValues.length)
     (20 until 100).foreach {
       index =>
@@ -234,7 +233,7 @@ class NavigableMapSpec extends FlatSpec with ShouldMatchers {
   "SingleNavigableMap" should "returns only the last values for each key" in {
     val builder = NavigableMap.newBuilder[Key, Value]
     builder += ((1, "One"))
-    val map = builder result()
+    val map = builder result ()
     expect(1) {
       map.size
     }
@@ -420,6 +419,35 @@ class NavigableMapSpec extends FlatSpec with ShouldMatchers {
     expect(rightAnswer)(map1)
   }
 
+  "NavigableMap.equals" should "return true for a sorted map with the same elements" in {
+    val baseMap = NavigableMap(1 -> "One", 2 -> "Two", 3 -> "Three", 4 -> "Four", 5 -> "FIVE", 5 -> "Five")
+    val baseSortedMap = SortedMap(1 -> "One", 2 -> "Two", 3 -> "Three", 4 -> "Four", 5 -> "FIVE", 5 -> "Five")
+    expect(baseSortedMap)(baseMap)
+  }
+
+  "NavigableMap.filterKeys" should "work" in {
+    val baseMap = NavigableMap(1 -> "One", 2 -> "Two", 3 -> "Three", 4 -> "Four", 5 -> "FIVE", 5 -> "Five")
+    val baseSortedMap = SortedMap(1 -> "One", 2 -> "Two", 3 -> "Three", 4 -> "Four", 5 -> "FIVE", 5 -> "Five")
+    val filter1: (Int) => Boolean = _ != 1
+    val nm1 = baseMap.filterKeys(filter1)
+    val sm1 = baseSortedMap.filterKeys(filter1)
+    expect(sm1)(nm1)
+    expect(sm1.iterator.toList)(nm1.iterator.toList)
+    expect(sm1.keys.toList)(nm1.keys.toList)
+  }
+
+  "NavigableMap.withFilterKeys" should "work" in {
+    val baseMap = NavigableMap(1 -> "One", 2 -> "Two", 3 -> "Three", 4 -> "Four", 5 -> "FIVE", 5 -> "Five")
+    val baseSortedMap = SortedMap(1 -> "One", 2 -> "Two", 3 -> "Three", 4 -> "Four", 5 -> "FIVE", 5 -> "Five")
+    val filter1: (Int) => Boolean = _ != 1
+    val nm1 = baseMap.withFilterKeys(filter1)
+    val sm1 = baseSortedMap.filterKeys(filter1)
+    expect(sm1)(nm1)
+    expect(sm1.size)(nm1.size)
+    expect(sm1.iterator.toList)(nm1.iterator.toList)
+    expect(sm1.keys.toList)(nm1.keys.toList)
+  }
+
   def testWithRandomValues(trials: Int, seed: Int, repetitions: Int) {
     val randomGenerator: Random = new Random(seed)
     val testValues = new ArrayBuffer[(Int, String)](trials)
@@ -427,12 +455,12 @@ class NavigableMapSpec extends FlatSpec with ShouldMatchers {
     val navigableBuilder = NavigableMap.newBuilder[Int, String]
 
     for (i <- 0 until trials) {
-      val random: Int = (randomGenerator nextInt())
+      val random: Int = (randomGenerator nextInt ())
       testValues += ((random, "Random " + random))
     }
 
     navigableBuilder ++= testValues
-    val navigableMap = navigableBuilder result()
+    val navigableMap = navigableBuilder result ()
 
     for (j <- 0 until repetitions; i <- 0 until trials) {
       expect(testValues(i)._2)(navigableMap.get(testValues(i)._1).get)
@@ -443,7 +471,7 @@ class NavigableMapSpec extends FlatSpec with ShouldMatchers {
     val builder = NavigableMap.newBuilder[Key, Value]
     val subtest = testValues.take(n)
     builder ++= subtest
-    val map = builder result()
+    val map = builder result ()
     assert(map.size == subtest.length)
     subtest.foreach[Unit] {
       entry =>

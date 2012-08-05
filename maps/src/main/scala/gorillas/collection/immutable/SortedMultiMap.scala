@@ -1,15 +1,15 @@
 package gorillas.collection.immutable
 
-import collection.{IterableLike, SortedMap, SortedMapLike}
+import collection.{ IterableLike, SortedMap, SortedMapLike }
 import gorillas.collection.mutable.SortedMultiMapBuilder
-import collection.generic.{Subtractable, Sorted}
+import collection.generic.{ Subtractable, Sorted }
 
 /**
  * A map with sorted keys that can hold multiple values under the same key.
  */
 trait SortedMultiMap[K, +V] extends Sorted[K, SortedMultiMap[K, V]]
-with IterableLike[(K, V), SortedMultiMap[K, V]] with PartialFunction[K, Iterable[V]] with Iterable[(K, V)]
-with Subtractable[K, SortedMultiMap[K, V]] with Immutable {
+  with IterableLike[(K, V), SortedMultiMap[K, V]] with PartialFunction[K, Iterable[V]] with Iterable[(K, V)]
+  with Subtractable[K, SortedMultiMap[K, V]] with Immutable {
 
   def empty: SortedMultiMap[K, V] = null
 

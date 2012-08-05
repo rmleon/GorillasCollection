@@ -69,7 +69,6 @@ class PairSortingSpecs extends FunSpec with ShouldMatchers {
       expectedValues should equal(values)
     }
 
-
     it("should maintain the values order when the array is ascending") {
       val keys = Range(1, 20).toArray
       val values = Range(20, 1).toArray
@@ -182,6 +181,5 @@ class PairSortingSpecs extends FunSpec with ShouldMatchers {
       PairSorting.direction(values.toArray, values.size) should equal(2)
     }
   }
-
 
 }

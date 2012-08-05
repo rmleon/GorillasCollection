@@ -2,7 +2,7 @@ package gorillas.collection.immutable
 
 import annotation.tailrec
 import gorillas.collection.generic.KeyTransformation
-import collection.{SortedMap, mutable}
+import collection.{ SortedMap, mutable }
 import compat.Platform
 
 /**
@@ -19,11 +19,10 @@ import compat.Platform
  * @tparam V associated value type
  */
 final class SortedArrayMap[K, V](private[this] val sortedKeys: Array[K],
-                                 private[this] val sortedValues: Array[V])
-                                (implicit val ordering: Ordering[K],
-                                 protected[this] val key2int: KeyTransformation[K],
-                                 protected[this] val keyManifest: ClassManifest[K],
-                                 protected[this] val valueManifest: ClassManifest[V])
+  private[this] val sortedValues: Array[V])(implicit val ordering: Ordering[K],
+    protected[this] val key2int: KeyTransformation[K],
+    protected[this] val keyManifest: ClassManifest[K],
+    protected[this] val valueManifest: ClassManifest[V])
   extends NavigableMap[K, V] {
   assert(sortedKeys.length == sortedValues.length, "Keys and values should have the same size")
 
@@ -46,11 +45,11 @@ final class SortedArrayMap[K, V](private[this] val sortedKeys: Array[K],
 
   private[this] val highestKeyLong: Long = key2int.transform(highestKey)
 
-  assert(lowestKeyLong < highestKeyLong, "The entries should be sorted in ascending order: %s".format(sortedKeys.mkString(",")))
+  assert(lowestKeyLong < highestKeyLong, "The entries should be sorted in ascending order")
   // Note: to be able to handle duplicated keys, this would need to be assert(min <= max)
 
   private[this] val range: Long = 1l + highestKeyLong - lowestKeyLong
-  assert(range > 0, "Range can't be 0 or a negative value (range: %d, maxInt: %d, minInt: %d)".format(range, highestKeyLong, lowestKeyLong))
+  assert(range > 0, "Range can't be 0 or a negative value")
 
   /**
    * Do not modify this array to keep this class immutable.
@@ -99,7 +98,6 @@ final class SortedArrayMap[K, V](private[this] val sortedKeys: Array[K],
     }
   }
 
-
   // ------- SortedMap and Map methods ------- //
   override def size = sizeInt - duplicates
 
@@ -130,7 +128,7 @@ final class SortedArrayMap[K, V](private[this] val sortedKeys: Array[K],
     else {
       val builder = NavigableMap.newBuilder[K, V]
       builder.sizeHint(sizeInt - 1)
-      var i = 0;
+      var i = 0
       while (i < sizeInt) {
         val currentKey = sortedKeys(i)
         if (currentKey != key) {
@@ -138,7 +136,7 @@ final class SortedArrayMap[K, V](private[this] val sortedKeys: Array[K],
         }
         i += 1
       }
-      builder result()
+      builder result ()
     }
   }
 
@@ -171,8 +169,8 @@ final class SortedArrayMap[K, V](private[this] val sortedKeys: Array[K],
       empty
     else {
       val builder = newBuilder
-      builder ++=(sortedKeys.slice(lowerIndex, higherIndex), sortedValues.slice(lowerIndex, higherIndex))
-      builder result()
+      builder ++= (sortedKeys.slice(lowerIndex, higherIndex), sortedValues.slice(lowerIndex, higherIndex))
+      builder result ()
     }
   }
 
@@ -183,7 +181,7 @@ final class SortedArrayMap[K, V](private[this] val sortedKeys: Array[K],
    * @tparam V1 new value type
    * @return a new map with the element added
    */
-  final def +[V1 >: V : ClassManifest](kv: (K, V1)): NavigableMap[K, V1] = {
+  final def +[V1 >: V: ClassManifest](kv: (K, V1)): NavigableMap[K, V1] = {
 
     var insertionIndex = getClosestIndex(kv._1)
     while (insertionIndex < sizeInt && ordering.equiv(kv._1, sortedKeys(insertionIndex)))
@@ -193,14 +191,14 @@ final class SortedArrayMap[K, V](private[this] val sortedKeys: Array[K],
     val builder = NavigableMap.newBuilder[K, V1]
     builder.sizeHint(sizeInt + 1)
     builder ++= (sortedKeys, arrayInstanceOfV1, 0, insertionIndex) += kv ++= (sortedKeys, arrayInstanceOfV1, insertionIndex, sizeInt - insertionIndex)
-    builder result()
+    builder result ()
   }
 
   def +[V1 >: V](kv: (K, V1)): SortedMap[K, V1] = {
     val builder = SortedMap.newBuilder[K, V1]
     builder.sizeHint(sizeInt + 1)
     builder ++= iterator += kv
-    builder result()
+    builder result ()
   }
 
   /**
@@ -243,7 +241,6 @@ final class SortedArrayMap[K, V](private[this] val sortedKeys: Array[K],
   //        None
   //    }
   //  }
-
 
   /**
    * @param key lookup key
@@ -409,9 +406,8 @@ final class SortedArrayMap[K, V](private[this] val sortedKeys: Array[K],
       -1
   }
 
-  override def toString =
+  override def toString() =
     "NavigableMap(%s%s)".format(
       (sortedKeys.take(5).zip(sortedValues.take(5))).mkString(","),
-      if (sizeInt > 5) "..." else ""
-    )
+      if (sizeInt > 5) "..." else "")
 }

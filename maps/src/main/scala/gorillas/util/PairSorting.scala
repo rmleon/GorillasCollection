@@ -147,7 +147,7 @@ object PairSorting {
    * @tparam K key type
    * @tparam V value type
    */
-  def mergeSort[K: Ordering : ClassManifest, V: ClassManifest](ks: Array[K], vs: Array[V]) {
+  def mergeSort[K: Ordering: ClassManifest, V: ClassManifest](ks: Array[K], vs: Array[V]) {
     val length = ks.length
     if (length < 6) // 6 seems to be the limit where insertion sort is faster than merge sort (including the checks below)
       insertionSort(ks, vs, 0, length)
@@ -173,8 +173,7 @@ object PairSorting {
    * @tparam K keys type
    * @tparam V values type
    */
-  private[this] def mergeSort[K, V](ks: Array[K], vs: Array[V], sk: Array[K], sv: Array[V], low: Int, high: Int)
-                                   (implicit ordering: Ordering[K]) {
+  private[this] def mergeSort[K, V](ks: Array[K], vs: Array[V], sk: Array[K], sv: Array[V], low: Int, high: Int)(implicit ordering: Ordering[K]) {
     //if (low < high - 1) {
     //    # split in half
     //    m = n / 2
@@ -245,8 +244,7 @@ object PairSorting {
    * @tparam K key type
    * @tparam V key value
    */
-  private[this] final def insertionSort[K, V](ks: Array[K], vs: Array[V], low: Int, high: Int)
-                                             (implicit ordering: Ordering[K]) {
+  private[this] final def insertionSort[K, V](ks: Array[K], vs: Array[V], low: Int, high: Int)(implicit ordering: Ordering[K]) {
     // for i = 2:n,
     var i = low + 1
     while (i < high) {

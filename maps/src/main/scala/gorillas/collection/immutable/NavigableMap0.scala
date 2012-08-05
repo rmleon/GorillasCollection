@@ -12,9 +12,9 @@ import scala.collection.SortedMap
  * @tparam V value type
  */
 private[immutable] final class NavigableMap0[K, +V](implicit val ordering: Ordering[K],
-                                                    protected[this] val key2int: KeyTransformation[K],
-                                                    protected[this] val keyManifest: ClassManifest[K],
-                                                    protected[this] val valueManifest: ClassManifest[V])
+  protected[this] val key2int: KeyTransformation[K],
+  protected[this] val keyManifest: ClassManifest[K],
+  protected[this] val valueManifest: ClassManifest[V])
   extends NavigableMap[K, V] {
 
   override def size = 0
@@ -49,11 +49,11 @@ private[immutable] final class NavigableMap0[K, +V](implicit val ordering: Order
 
   def -(key: K) = this
 
-  def +[V1 >: V : ClassManifest](kv: (K, V1)): NavigableMap[K, V1] = NavigableMap(kv)
+  def +[V1 >: V: ClassManifest](kv: (K, V1)): NavigableMap[K, V1] = NavigableMap(kv)
 
   def +[V1 >: V](kv: (K, V1)): SortedMap[K, V1] = SortedMap(kv)
 
   def rangeImpl(from: Option[K], until: Option[K]) = this
 
-  override def toString = "NavigableMap()"
+  override def toString() = "NavigableMap()"
 }

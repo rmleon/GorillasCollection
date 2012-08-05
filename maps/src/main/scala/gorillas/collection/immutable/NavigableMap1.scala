@@ -1,7 +1,7 @@
 package gorillas.collection.immutable
 
 import gorillas.collection.generic.KeyTransformation
-import collection.{mutable, SortedMap}
+import collection.{ mutable, SortedMap }
 
 /**
  * Map with a single entry optimized for speed.
@@ -12,11 +12,10 @@ import collection.{mutable, SortedMap}
  * @tparam K key type
  * @tparam V value type
  */
-private[immutable] final class NavigableMap1[K, +V](private[this] val k: K, private[this] val v: V)
-                                                   (implicit val ordering: Ordering[K],
-                                                    protected[this] val key2int: KeyTransformation[K],
-                                                    protected[this] val keyManifest: ClassManifest[K],
-                                                    protected[this] val valueManifest: ClassManifest[V])
+private[immutable] final class NavigableMap1[K, +V](private[this] val k: K, private[this] val v: V)(implicit val ordering: Ordering[K],
+  protected[this] val key2int: KeyTransformation[K],
+  protected[this] val keyManifest: ClassManifest[K],
+  protected[this] val valueManifest: ClassManifest[V])
   extends NavigableMap[K, V] {
 
   // private[this] val seems to offer a small performance increase
@@ -74,9 +73,9 @@ private[immutable] final class NavigableMap1[K, +V](private[this] val k: K, priv
   def lowerKey(key: K) =
     if (ordering.gt(key, k)) keyOption else None
 
-  def +[V1 >: V : ClassManifest](kv: (K, V1)): NavigableMap[K, V1] = NavigableMap((k -> v), kv)
+  def +[V1 >: V: ClassManifest](kv: (K, V1)): NavigableMap[K, V1] = NavigableMap((k -> v), kv)
 
   def +[V1 >: V](kv: (K, V1)): SortedMap[K, V1] = SortedMap((k -> v), kv)
 
-  override def toString = "NavigableMap(%s -> %s)".format(k, v)
+  override def toString() = "NavigableMap(%s -> %s)".format(k, v)
 }

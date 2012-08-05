@@ -42,17 +42,17 @@ class NavigableMapPerformanceSpecs extends FlatSpec with ShouldMatchers {
     val testValues = new ArrayBuffer[(Int, String)](trials)
 
     for (i <- 0 until trials) {
-      val random: Int = (randomGenerator nextInt())
+      val random: Int = (randomGenerator nextInt ())
       testValues.append((random, "Hello " + random))
     }
 
     val navigableBuilder = NavigableMap.newBuilder[Int, String]
     navigableBuilder ++= testValues
-    val navigableMap = navigableBuilder result()
+    val navigableMap = navigableBuilder result ()
 
     val mapBuilder = Map.newBuilder[Int, String]
     mapBuilder ++= testValues
-    val map = mapBuilder result()
+    val map = mapBuilder result ()
 
     //assert(navigableMap.length == testValues.length, "Test results and navigableMap don't have the same size")
     //System.gc() // Start with a clean slate
@@ -79,22 +79,20 @@ class NavigableMapPerformanceSpecs extends FlatSpec with ShouldMatchers {
 
   def runTestOne(repetitions: Int) = {
     val mapBuilder = Map.newBuilder[Int, String]
-    val map = mapBuilder result()
+    val map = mapBuilder result ()
     val startTimeNormalMap = System.currentTimeMillis()
     (0 until repetitions).foreach[Unit](
-      j => assert(map.get(j) == None)
-    )
+      j => assert(map.get(j) == None))
     val endTimeNormalMap = System.currentTimeMillis()
     endTimeNormalMap - startTimeNormalMap
   }
 
   def runTestTwo(repetitions: Int) = {
     val navigableBuilder = NavigableMap.newBuilder[Int, String]
-    val navigableMap = navigableBuilder result()
+    val navigableMap = navigableBuilder result ()
     val startTimeNavigableMap = System.currentTimeMillis()
     (0 until repetitions).foreach[Unit](
-      j => assert(navigableMap.get(j) == None)
-    )
+      j => assert(navigableMap.get(j) == None))
     val endTimeNavigableMap = System.currentTimeMillis()
     endTimeNavigableMap - startTimeNavigableMap
   }
@@ -103,7 +101,7 @@ class NavigableMapPerformanceSpecs extends FlatSpec with ShouldMatchers {
     //System.gc() // Start with a clean slate
     val startTimeNavigableMap = System.currentTimeMillis()
     builder ++= tests
-    val map = builder result()
+    val map = builder result ()
     val endTimeNavigableMap = System.currentTimeMillis()
     builder.clear()
     endTimeNavigableMap - startTimeNavigableMap

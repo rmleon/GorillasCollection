@@ -23,16 +23,16 @@ class NavigableMapMemorySpecs extends FlatSpec with ShouldMatchers {
   /**
    * The following test requires -Xmx512mb
    */
-  "NavigableMapBuilder" should "be able to hold 10,000,000 (random) objects without running out of memory" taggedAs(Tags.Memory) in {
+  "NavigableMapBuilder" should "be able to hold 10,000,000 (random) objects without running out of memory" taggedAs (Tags.Memory) in {
     val randomGenerator: Random = new Random(347)
     val navigableBuilder = NavigableMap.newBuilder[Int, String]
     var i = 0
     while (i < 10000000) {
-      val random: Int = (randomGenerator nextInt())
+      val random: Int = (randomGenerator nextInt ())
       navigableBuilder += ((random, "Random "))
       i += 1
     }
-    val navigableMap = navigableBuilder result()
+    val navigableMap = navigableBuilder result ()
   }
 
   /**

@@ -1,12 +1,11 @@
 package gorillas.collection.mutable
 
-import gorillas.collection.immutable.{SortedArrayMap, NavigableMap}
+import gorillas.collection.immutable.{ SortedArrayMap, NavigableMap }
 import gorillas.util.PairSorting
 import gorillas.collection.generic.KeyTransformation
-import scala.collection.mutable.Builder
 import scala.collection.IndexedSeqLike
 import compat.Platform
-
+import collection.mutable
 
 /**
  * @author Ricardo Leon
@@ -16,14 +15,14 @@ import compat.Platform
  * @tparam V map entry's value type
  */
 class NavigableMapBuilder[K, V](implicit ordering: Ordering[K], key2int: KeyTransformation[K], keyManifest: ClassManifest[K], valueManifest: ClassManifest[V])
-  extends Builder[(K, V), NavigableMap[K, V]] {
+  extends mutable.Builder[(K, V), NavigableMap[K, V]] {
 
   /**
    * Specialized container used to hold the keys and values.
    * It gives me full access to the array to avoid unnecessary data duplication, allow quick access to the sorting, and a memory-light implementation.
    * @tparam A type contained in the array.
    */
-  protected class ResizableArray[A: ClassManifest] {
+  protected final class ResizableArray[A: ClassManifest] {
     var array = new Array[A](16) // Unlike Scala's ResizableArray and ArrayBuffer, this allows me direct access to the backing array
 
     var size = 0
@@ -55,7 +54,7 @@ class NavigableMapBuilder[K, V](implicit ordering: Ordering[K], key2int: KeyTran
       array = new Array[A](16)
     }
 
-    final def +=(e: A) = {
+    def +=(e: A) = {
       growSize(1)
       array(size) = e
       size += 1
@@ -64,7 +63,7 @@ class NavigableMapBuilder[K, V](implicit ordering: Ordering[K], key2int: KeyTran
 
     def ++=(source: Array[A]): ResizableArray[A] = ++=(source, 0, source.length)
 
-    @inline final def ++=(source: Array[A], sourceStart: Int, sourceLen: Int) = {
+    def ++=(source: Array[A], sourceStart: Int, sourceLen: Int) = {
       growSize(sourceLen)
       Platform.arraycopy(source, sourceStart, array, size, sourceLen)
       size += sourceLen

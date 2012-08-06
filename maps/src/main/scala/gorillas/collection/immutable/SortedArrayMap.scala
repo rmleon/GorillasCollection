@@ -404,9 +404,4 @@ final class SortedArrayMap[K, V](private[this] val sortedKeys: Array[K],
     } else
       -1
   }
-
-  override def toString() =
-    "NavigableMap(%s%s)".format(
-      (sortedKeys.take(5).zip(sortedValues.take(5))).mkString(","),
-      if (sizeInt > 5) "..." else "")
 }

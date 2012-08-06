@@ -72,6 +72,8 @@ trait NavigableMap[K, +V] extends SortedMap[K, V] with SortedMapLike[K, V, Navig
    * @return returns a collection that filters the underlying collection affecting the following methods: get, iterator, ceilingKey, higherKey, lowerKey, forEach, contains, and size.
    */
   def withFilterKeys(p: K => Boolean): NavigableMap[K, V] = new NavigableMap.KeyFilteredNavigableMap[K, V](this, p)
+
+  override def stringPrefix = "NavigableMap"
 }
 
 object NavigableMap extends NavigableMapFactory[NavigableMap] {

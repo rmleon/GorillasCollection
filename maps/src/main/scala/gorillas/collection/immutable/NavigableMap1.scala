@@ -1,7 +1,7 @@
 package gorillas.collection.immutable
 
 import gorillas.collection.generic.KeyTransformation
-import collection.{ mutable, SortedMap }
+import collection.SortedMap
 
 /**
  * Map with a single entry optimized for speed.

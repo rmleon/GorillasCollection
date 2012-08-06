@@ -4,8 +4,8 @@ import gorillas.collection.immutable.{ SortedArrayMap, NavigableMap }
 import gorillas.util.PairSorting
 import gorillas.collection.generic.KeyTransformation
 import scala.collection.IndexedSeqLike
-import compat.Platform
 import collection.mutable
+import compat.Platform
 
 /**
  * @author Ricardo Leon

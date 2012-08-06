@@ -2,8 +2,7 @@ package gorillas.collection.immutable
 
 import annotation.tailrec
 import gorillas.collection.generic.KeyTransformation
-import collection.{ SortedMap, mutable }
-import compat.Platform
+import collection.SortedMap
 
 /**
  * Very fast access NavigableMap with low footprint.

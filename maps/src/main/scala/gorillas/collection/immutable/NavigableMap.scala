@@ -1,13 +1,8 @@
 package gorillas.collection.immutable
 
 import collection._
-import collection.generic.CanBuildFrom
 import gorillas.collection.generic.KeyTransformation
 import gorillas.collection.mutable.NavigableMapBuilder
-import scala.Iterator
-import scala.Traversable
-import scala.Predef._
-import gorillas.collection.immutable.NavigableMap.KeyFilteredNavigableMap
 
 /**
  * @author Ricardo Leon
@@ -104,19 +99,17 @@ object NavigableMap extends NavigableMapFactory[NavigableMap] {
     def iterator: Iterator[(K, V)] = underlying.iterator.withFilter(kv => p(kv._1))
 
     def ceilingKey(key: K): Option[K] = {
-      val originalKeyOpt = underlying.ceilingKey(key)
-      if (originalKeyOpt.isEmpty || p(originalKeyOpt.get))
-        originalKeyOpt
-      else
-        underlying.higherKey(key)
+      var found = underlying.ceilingKey(key)
+      while (found.isDefined && !p(found.get))
+        found = underlying.higherKey(found.get)
+      found
     }
 
     def floorKey(key: K): Option[K] = {
-      val originalKeyOpt = underlying.floorKey(key)
-      if (originalKeyOpt.isEmpty || p(originalKeyOpt.get))
-        originalKeyOpt
-      else
-        underlying.lowerKey(key)
+      var found = underlying.floorKey(key)
+      while (found.isDefined && !p(found.get))
+        found = underlying.lowerKey(found.get)
+      found
     }
 
     def higherKey(key: K): Option[K] = {

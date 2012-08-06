@@ -436,7 +436,7 @@ class NavigableMapSpec extends FlatSpec with ShouldMatchers {
     expect(sm1.keys.toList)(nm1.keys.toList)
   }
 
-  "NavigableMap.withFilterKeys" should "work" in {
+  "NavigableMap.withFilterKeys" should "work for size and, iterators, and keys" in {
     val baseMap = NavigableMap(1 -> "One", 2 -> "Two", 3 -> "Three", 4 -> "Four", 5 -> "FIVE", 5 -> "Five")
     val baseSortedMap = SortedMap(1 -> "One", 2 -> "Two", 3 -> "Three", 4 -> "Four", 5 -> "FIVE", 5 -> "Five")
     val filter1: (Int) => Boolean = _ != 1
@@ -447,6 +447,124 @@ class NavigableMapSpec extends FlatSpec with ShouldMatchers {
     expect(sm1.iterator.toList)(nm1.iterator.toList)
     expect(sm1.keys.toList)(nm1.keys.toList)
   }
+
+  it should "work for contains, get, ceilingKey, higherKey, lowerKey, floorKey" in {
+    val baseMap = NavigableMap(1 -> "One", 2 -> "Two", 3 -> "Three", 4 -> "Four", 5 -> "FIVE", 5 -> "Five")
+    val baseSortedMap = SortedMap(1 -> "One", 2 -> "Two", 3 -> "Three", 4 -> "Four", 5 -> "FIVE", 5 -> "Five")
+    val filter1: (Int) => Boolean = _ != 1
+    val nm1 = baseMap.withFilterKeys(filter1)
+    val sm1 = baseSortedMap.filterKeys(filter1)
+    expect(sm1)(nm1)
+    expect(sm1.size)(nm1.size)
+    expect(sm1.iterator.toList)(nm1.iterator.toList)
+    expect(sm1.keys.toList)(nm1.keys.toList)
+    expect(sm1.get(1))(nm1.get(1))
+    expect(sm1.get(2))(nm1.get(2))
+    expect(sm1.get(3))(nm1.get(3))
+    expect(sm1.contains(1))(nm1.contains(1))
+    expect(sm1.contains(2))(nm1.contains(2))
+    expect(sm1.contains(3))(nm1.contains(3))
+
+    val nm2 = NavigableMap(2 -> "Two", 3 -> "Three", 4 -> "Four", 5 -> "FIVE", 5 -> "Five")
+    filterTests1(nm1, nm2)
+  }
+
+  def filterTests1[V](nm1: NavigableMap[Int,V], nm2: NavigableMap[Int,V]) {
+    expect(nm2.ceilingKey(0))(nm1.ceilingKey(0))
+    expect(nm2.ceilingKey(1))(nm1.ceilingKey(1))
+    expect(nm2.ceilingKey(2))(nm1.ceilingKey(2))
+    expect(nm2.ceilingKey(3))(nm1.ceilingKey(3))
+    expect(nm2.ceilingKey(4))(nm1.ceilingKey(4))
+    expect(nm2.ceilingKey(6))(nm1.ceilingKey(6))
+
+    expect(nm2.higherKey(0))(nm1.higherKey(0))
+    expect(nm2.higherKey(1))(nm1.higherKey(1))
+    expect(nm2.higherKey(2))(nm1.higherKey(2))
+    expect(nm2.higherKey(3))(nm1.higherKey(3))
+    expect(nm2.higherKey(4))(nm1.higherKey(4))
+    expect(nm2.higherKey(6))(nm1.higherKey(6))
+
+    expect(nm2.lowerKey(0))(nm1.lowerKey(0))
+    expect(nm2.lowerKey(1))(nm1.lowerKey(1))
+    expect(nm2.lowerKey(2))(nm1.lowerKey(2))
+    expect(nm2.lowerKey(3))(nm1.lowerKey(3))
+    expect(nm2.lowerKey(4))(nm1.lowerKey(4))
+    expect(nm2.lowerKey(6))(nm1.lowerKey(6))
+
+    expect(nm2.floorKey(0))(nm1.floorKey(0))
+    expect(nm2.floorKey(1))(nm1.floorKey(1))
+    expect(nm2.floorKey(2))(nm1.floorKey(2))
+    expect(nm2.floorKey(3))(nm1.floorKey(3))
+    expect(nm2.floorKey(4))(nm1.floorKey(4))
+    expect(nm2.floorKey(6))(nm1.floorKey(6))
+  }
+
+  it should "work for size and, iterators, and keys when the filter is in the middle" in {
+    val baseMap = NavigableMap(1 -> "One", 2 -> "Two", 3 -> "Three", 4 -> "Four", 5 -> "FIVE", 5 -> "Five")
+    val baseSortedMap = SortedMap(1 -> "One", 2 -> "Two", 3 -> "Three", 4 -> "Four", 5 -> "FIVE", 5 -> "Five")
+    val filter1: (Int) => Boolean = _ != 3
+    val nm1 = baseMap.withFilterKeys(filter1)
+    val sm1 = baseSortedMap.filterKeys(filter1)
+    expect(sm1)(nm1)
+    expect(sm1.size)(nm1.size)
+    expect(sm1.iterator.toList)(nm1.iterator.toList)
+    expect(sm1.keys.toList)(nm1.keys.toList)
+  }
+
+  it should "work for contains, get, ceilingKey, higherKey, lowerKey, floorKey when the filter is in the middle" in {
+    val baseMap = NavigableMap(1 -> "One", 2 -> "Two", 3 -> "Three", 4 -> "Four", 5 -> "FIVE", 5 -> "Five")
+    val baseSortedMap = SortedMap(1 -> "One", 2 -> "Two", 3 -> "Three", 4 -> "Four", 5 -> "FIVE", 5 -> "Five")
+    val filter1: (Int) => Boolean = _ != 3
+    val nm1 = baseMap.withFilterKeys(filter1)
+    val sm1 = baseSortedMap.filterKeys(filter1)
+    expect(sm1)(nm1)
+    expect(sm1.size)(nm1.size)
+    expect(sm1.iterator.toList)(nm1.iterator.toList)
+    expect(sm1.keys.toList)(nm1.keys.toList)
+    expect(sm1.get(1))(nm1.get(1))
+    expect(sm1.get(2))(nm1.get(2))
+    expect(sm1.get(3))(nm1.get(3))
+    expect(sm1.contains(1))(nm1.contains(1))
+    expect(sm1.contains(2))(nm1.contains(2))
+    expect(sm1.contains(3))(nm1.contains(3))
+
+    val nm2 = NavigableMap(1 -> "One", 2 -> "Two", 4 -> "Four", 5 -> "FIVE", 5 -> "Five")
+    filterTests1(nm1, nm2)
+  }
+
+  it should "work for size and, iterators, and keys when the filter is in the top" in {
+    val baseMap = NavigableMap(1 -> "One", 2 -> "Two", 3 -> "Three", 4 -> "Four", 5 -> "FIVE", 5 -> "Five")
+    val baseSortedMap = SortedMap(1 -> "One", 2 -> "Two", 3 -> "Three", 4 -> "Four", 5 -> "FIVE", 5 -> "Five")
+    val filter1: (Int) => Boolean = _ != 5
+    val nm1 = baseMap.withFilterKeys(filter1)
+    val sm1 = baseSortedMap.filterKeys(filter1)
+    expect(sm1)(nm1)
+    expect(sm1.size)(nm1.size)
+    expect(sm1.iterator.toList)(nm1.iterator.toList)
+    expect(sm1.keys.toList)(nm1.keys.toList)
+  }
+
+  it should "work for contains, get, ceilingKey, higherKey, lowerKey, floorKey when the filter is in the top" in {
+    val baseMap = NavigableMap(1 -> "One", 2 -> "Two", 3 -> "Three", 4 -> "Four", 5 -> "FIVE", 5 -> "Five")
+    val baseSortedMap = SortedMap(1 -> "One", 2 -> "Two", 3 -> "Three", 4 -> "Four", 5 -> "FIVE", 5 -> "Five")
+    val filter1: (Int) => Boolean = _ != 5
+    val nm1 = baseMap.withFilterKeys(filter1)
+    val sm1 = baseSortedMap.filterKeys(filter1)
+    expect(sm1)(nm1)
+    expect(sm1.size)(nm1.size)
+    expect(sm1.iterator.toList)(nm1.iterator.toList)
+    expect(sm1.keys.toList)(nm1.keys.toList)
+    expect(sm1.get(1))(nm1.get(1))
+    expect(sm1.get(2))(nm1.get(2))
+    expect(sm1.get(3))(nm1.get(3))
+    expect(sm1.contains(1))(nm1.contains(1))
+    expect(sm1.contains(2))(nm1.contains(2))
+    expect(sm1.contains(3))(nm1.contains(3))
+
+    val nm2 = NavigableMap(1 -> "One", 2 -> "Two", 3 -> "Three", 4 -> "Four")
+    filterTests1(nm1, nm2)
+  }
+
 
   def testWithRandomValues(trials: Int, seed: Int, repetitions: Int) {
     val randomGenerator: Random = new Random(seed)
@@ -466,6 +584,8 @@ class NavigableMapSpec extends FlatSpec with ShouldMatchers {
       expect(testValues(i)._2)(navigableMap.get(testValues(i)._1).get)
     }
   }
+
+  // TODO Make sure that ++ returns a NavigableMap and not Map
 
   def testNResults(n: Int) {
     val builder = NavigableMap.newBuilder[Key, Value]

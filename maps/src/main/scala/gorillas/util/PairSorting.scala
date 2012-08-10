@@ -153,10 +153,10 @@ object PairSorting {
       insertionSort(ks, vs, 0, length)
     else {
       val comparison = direction(ks, length)
-      if (comparison == -1)
-        reverse(ks, vs)
-      else if (comparison == 2)
+      if (comparison == 0)
         mergeSort(ks, vs, new Array[K](length), new Array[V](length), 0, length)
+      else if (comparison == -1)
+        reverse(ks, vs)
     }
   }
 
@@ -267,7 +267,7 @@ object PairSorting {
   /**
    * Checks whether an array has all its elements in ascending or descending ordering.
    * Assumes that the array has 2 or more elements
-   * @return -1 if the array is descending.  0 if the array is all equals.  1 if the array is ascending.  2 if the array is not ordered.
+   * @return -1 if the array is descending.  1 if the array is ascending (or all elements equal).  0 if the array is not ordered.
    */
   protected[util] final def direction[A](array: Array[A], length: Int)(implicit ordering: Ordering[A]) = {
     var i = 1
@@ -276,13 +276,17 @@ object PairSorting {
       initial = ordering.compare(array(i - 1), array(i))
       i += 1
     }
-    initial *= -1
-
-    while (i < length && initial != ordering.compare(array(i - 1), array(i)))
-      i += 1
-
+    if (initial <= 0) {
+      initial = 1
+      while (i < length && ordering.lteq(array(i - 1), array(i)))
+        i += 1
+    } else {
+      initial = -1
+      while (i < length && ordering.gteq(array(i - 1), array(i)))
+        i += 1
+    }
     if (i != length)
-      2
+      0
     else
       initial
   }

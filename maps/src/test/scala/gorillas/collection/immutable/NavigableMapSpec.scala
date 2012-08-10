@@ -293,6 +293,18 @@ class NavigableMapSpec extends FlatSpec with ShouldMatchers {
     testWithRandomValues(1000000, 67, 1)
   }
 
+  it should "work with Strings" in {
+    val builder = NavigableMap.newBuilder[String, Int]
+    val builder2 = SortedMap.newBuilder[String, Int]
+    val random = new Random
+    for (i <- 0 to 10000) {
+      val rand = random.nextString(20)
+      builder += (rand -> i)
+      builder2 += (rand -> i)
+    }
+    expect(builder2.result())(builder.result())
+  }
+
   it should "handle duplicate values" in {
     val map1 = NavigableMap(1 -> "One", 2 -> "Two", 1 -> "ONE")
     val rightAnswer = NavigableMap(1 -> "ONE", 2 -> "Two")
@@ -469,7 +481,7 @@ class NavigableMapSpec extends FlatSpec with ShouldMatchers {
     filterTests1(nm1, nm2)
   }
 
-  def filterTests1[V](nm1: NavigableMap[Int,V], nm2: NavigableMap[Int,V]) {
+  def filterTests1[V](nm1: NavigableMap[Int, V], nm2: NavigableMap[Int, V]) {
     expect(nm2.ceilingKey(0))(nm1.ceilingKey(0))
     expect(nm2.ceilingKey(1))(nm1.ceilingKey(1))
     expect(nm2.ceilingKey(2))(nm1.ceilingKey(2))
@@ -564,7 +576,6 @@ class NavigableMapSpec extends FlatSpec with ShouldMatchers {
     val nm2 = NavigableMap(1 -> "One", 2 -> "Two", 3 -> "Three", 4 -> "Four")
     filterTests1(nm1, nm2)
   }
-
 
   def testWithRandomValues(trials: Int, seed: Int, repetitions: Int) {
     val randomGenerator: Random = new Random(seed)

@@ -48,6 +48,5 @@ class NavigableMapMemorySpecs extends FlatSpec with ShouldMatchers {
   //        i += 1
   //      }
   //      val map = builder result()
-  //      println("Result size: %d".format(map.size))
   //    }
 }

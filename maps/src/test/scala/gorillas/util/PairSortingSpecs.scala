@@ -171,14 +171,14 @@ class PairSortingSpecs extends FunSpec with ShouldMatchers {
       PairSorting.direction(values.toArray, values.size) should equal(1)
     }
 
-    it("should return 0 when the array contains the same element") {
+    it("should return 1 when the array contains the same element") {
       val values = ArrayBuffer(3, 3, 3, 3, 3)
-      PairSorting.direction(values.toArray, values.size) should equal(0)
+      PairSorting.direction(values.toArray, values.size) should equal(1)
     }
 
-    it("should return 2 when the array contains different elements") {
+    it("should return 0 when the array contains different elements") {
       val values = ArrayBuffer(3, 3, 3, 6, 3, 3)
-      PairSorting.direction(values.toArray, values.size) should equal(2)
+      PairSorting.direction(values.toArray, values.size) should equal(0)
     }
   }
 

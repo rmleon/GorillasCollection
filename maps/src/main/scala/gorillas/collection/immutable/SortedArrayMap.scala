@@ -44,7 +44,7 @@ final class SortedArrayMap[K, V](private[this] val sortedKeys: Array[K],
 
   private[this] val highestKeyLong: Long = key2int.transform(highestKey)
 
-  assert(lowestKeyLong < highestKeyLong, "The entries should be sorted in ascending order")
+  assert(lowestKeyLong < highestKeyLong, "The entries should be sorted in ascending order (max:%d, min:%d, max:%s, min:%s)" format (highestKeyLong, lowestKeyLong, highestKey, lowestKey))
   // Note: to be able to handle duplicated keys, this would need to be assert(min <= max)
 
   private[this] val range: Long = 1l + highestKeyLong - lowestKeyLong

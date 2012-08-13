@@ -5,7 +5,8 @@ import scala.collection.immutable.SortedSet
 import scala.collection.SortedMap
 
 /**
- * Just an empty map.
+ * Empty map.
+ * @author Ricardo Leon
  * @param ordering key ordering used to build new maps.
  * @param key2int key transformation used to build new maps.
  * @tparam K key type

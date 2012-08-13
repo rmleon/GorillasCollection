@@ -6,6 +6,7 @@ import collection.generic.{ Subtractable, Sorted }
 
 /**
  * A map with sorted keys that can hold multiple values under the same key.
+ * @author Ricardo Leon
  */
 trait SortedMultiMap[K, +V] extends Sorted[K, SortedMultiMap[K, V]]
   with IterableLike[(K, V), SortedMultiMap[K, V]] with PartialFunction[K, Iterable[V]] with Iterable[(K, V)]

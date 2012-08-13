@@ -20,7 +20,7 @@ object KeyTransformation {
   }
 
   implicit object FloatKeyTransformation extends KeyTransformation[Float] {
-    final val divisor = Float.MaxValue / Int.MaxValue.toDouble
+    final val divisor = Float.MaxValue / Int.MaxValue.toFloat
     def transform(x: Float) = (x / divisor).toInt
   }
 
@@ -32,6 +32,11 @@ object KeyTransformation {
   implicit object LongKeyTransformation extends KeyTransformation[Long] {
     final val divisor = Long.MaxValue / Int.MaxValue.toLong
     def transform(x: Long) = (x / divisor).toInt
+  }
+
+  implicit object DateTimeTransformation extends KeyTransformation[java.util.Date] {
+    final val divisor = Long.MaxValue / Int.MaxValue.toLong
+    def transform(x: java.util.Date): Int = (x.getTime / divisor).toInt
   }
 
   /**

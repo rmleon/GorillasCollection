@@ -132,13 +132,11 @@ class NavigableMapBuilder[K, V](implicit ordering: Ordering[K], key2int: KeyTran
     keys.size match {
       case 0 => NavigableMap.empty[K, V]
       case 1 => NavigableMap.single((keys(0), values(0)))
-      case _ => {
-        //val (keysArr, valuesArr) = Sorting.stableSort[K, V](keys, values)
+      case _ =>
         val keysArray = keys.toArray
         val valuesArray = values.toArray
         PairSorting.mergeSort(keysArray, valuesArray)
         new SortedArrayMap[K, V](keysArray, valuesArray)
-      }
     }
   }
 }

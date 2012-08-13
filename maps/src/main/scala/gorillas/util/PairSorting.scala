@@ -142,6 +142,7 @@ object PairSorting {
   /**
    * Merge sort based on the algorithm described on http://www.sorting-algorithms.com/
    * Uses insertion sort for 5 or fewer elements
+   * @author Ricardo Leon
    * @param ks the keys
    * @param vs the values
    * @tparam K key type

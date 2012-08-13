@@ -2,12 +2,12 @@ package gorillas.collection.immutable
 
 import annotation.tailrec
 import gorillas.collection.generic.KeyTransformation
-import collection.SortedMap
+import collection.{IndexedSeqLike, GenTraversableOnce, SortedMap}
 
 /**
  * Very fast access NavigableMap with low footprint.
  * Assumes that at least two elements are present.
- * All methods inhereted from SortedMap have the same behavior as SortedMap.  However, it also holds the values under repeated keys.
+ * All methods inherited from SortedMap have the same behavior as SortedMap.  However, it also holds the values under repeated keys.
  * TODO: Implement the methods to get all values under the same key.
  * @author Ricardo Leon
  * @param sortedKeys keys ordered according to "ordering"
@@ -95,6 +95,15 @@ final class SortedArrayMap[K, V](private[this] val sortedKeys: Array[K],
       f(sortedKeys(i) -> sortedValues(i))
       i += 1
     }
+  }
+
+  override def ++[V1 >: V : ClassManifest](xs: GenTraversableOnce[(K, V1)]): NavigableMap[K, V1] = {
+    val builder = NavigableMap.newBuilder[K, V1]
+    if (xs.isInstanceOf[IndexedSeqLike[_, _]])
+      builder.sizeHint(xs.size + sortedKeys.size)
+    builder ++= (sortedKeys, sortedValues, 0, sortedKeys.length)
+    builder ++= xs
+    builder result()
   }
 
   // ------- SortedMap and Map methods ------- //

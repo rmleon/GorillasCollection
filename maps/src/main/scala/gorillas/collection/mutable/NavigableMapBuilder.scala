@@ -3,8 +3,7 @@ package gorillas.collection.mutable
 import gorillas.collection.immutable.{ SortedArrayMap, NavigableMap }
 import gorillas.util.PairSorting
 import gorillas.collection.generic.KeyTransformation
-import scala.collection.IndexedSeqLike
-import collection.mutable
+import collection.{GenTraversableOnce, IndexedSeqLike, mutable}
 import compat.Platform
 
 /**
@@ -61,9 +60,9 @@ class NavigableMapBuilder[K, V](implicit ordering: Ordering[K], key2int: KeyTran
       this
     }
 
-    def ++=(source: Array[A]): ResizableArray[A] = ++=(source, 0, source.length)
+    def ++=[A1 <: A](source: Array[A1]): ResizableArray[A] = ++=(source, 0, source.length)
 
-    def ++=(source: Array[A], sourceStart: Int, sourceLen: Int) = {
+    def ++=[A1 <: A](source: Array[A1], sourceStart: Int, sourceLen: Int) = {
       growSize(sourceLen)
       Platform.arraycopy(source, sourceStart, array, size, sourceLen)
       size += sourceLen
@@ -87,7 +86,10 @@ class NavigableMapBuilder[K, V](implicit ordering: Ordering[K], key2int: KeyTran
     values.sizeHint(size)
   }
 
-  override def ++=(xs: TraversableOnce[(K, V)]): this.type = {
+  override def ++=(xs: TraversableOnce[(K, V)]): this.type =
+    ++=(xs.asInstanceOf[GenTraversableOnce[(K,V)]])
+
+  def ++=(xs: GenTraversableOnce[(K, V)]): this.type = {
     if (xs.isInstanceOf[IndexedSeqLike[_, _]])
       sizeHint(xs.size + keys.size + 1)
 
@@ -99,7 +101,7 @@ class NavigableMapBuilder[K, V](implicit ordering: Ordering[K], key2int: KeyTran
     this
   }
 
-  def ++=(ks: Array[K], vs: Array[V]): this.type = {
+  def ++=[V1 <: V](ks: Array[K], vs: Array[V1]): this.type = {
     require(ks.size == vs.size, "Keys and values must have the same size")
     sizeHint(ks.size + keys.size + 1)
     keys ++= ks
@@ -107,7 +109,7 @@ class NavigableMapBuilder[K, V](implicit ordering: Ordering[K], key2int: KeyTran
     this
   }
 
-  def ++=(ks: Array[K], vs: Array[V], sourceStart: Int, sourceLen: Int): this.type = {
+  def ++=[V1 <: V](ks: Array[K], vs: Array[V1], sourceStart: Int, sourceLen: Int): this.type = {
     require(ks.size == vs.size, "Keys and values must have the same size")
     require(sourceStart + sourceLen <= ks.length, "sourceStart + sourceLen must be less or equal the arrays length")
     keys ++= (ks, sourceStart, sourceLen)

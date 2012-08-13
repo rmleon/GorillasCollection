@@ -596,7 +596,16 @@ class NavigableMapSpec extends FlatSpec with ShouldMatchers {
     }
   }
 
-  // TODO Make sure that ++ returns a NavigableMap and not Map
+  "NavigableMapBuilder" should "take subclasses" in {
+    class Test1(val x: String)
+    class Test2(val y: Int) extends Test1("test2")
+
+    val builder = NavigableMap.newBuilder[Int, Test1]
+    builder += 1 -> new Test1("Hello")
+    builder += 2 -> new Test2(2)
+    builder += 3 -> new Test1("World")
+    val map = builder result ()
+  }
 
   def testNResults(n: Int) {
     val builder = NavigableMap.newBuilder[Key, Value]

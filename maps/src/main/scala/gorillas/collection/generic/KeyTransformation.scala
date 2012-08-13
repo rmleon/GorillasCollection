@@ -2,7 +2,7 @@ package gorillas.collection.generic
 
 /**
  * Ideally, a one to one linear transformation (preserving the ordering)
- * @tparam K Navigatable map key type
+ * @tparam K Navigable map key type
  */
 trait KeyTransformation[K] {
   def transform(x: K): Int
@@ -35,7 +35,7 @@ object KeyTransformation {
   }
 
   /**
-   * This assumes that String Ordering follow's the natural ordering.
+   * This assumes that String Ordering follows the natural ordering.
    * If this is not the case, a transformation that yields integers
    */
   implicit object StringKeyTransformation extends KeyTransformation[String] {

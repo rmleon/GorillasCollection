@@ -13,7 +13,6 @@ import gorillas.collection.mutable.NavigableMapBuilder
  * @tparam V value type
  */
 trait NavigableMap[K, +V] extends SortedMap[K, V] with SortedMapLike[K, V, NavigableMap[K, V]] with Immutable {
-  self =>
 
   protected[this] implicit def key2int: KeyTransformation[K]
 
@@ -72,6 +71,9 @@ trait NavigableMap[K, +V] extends SortedMap[K, V] with SortedMapLike[K, V, Navig
    * @return returns a collection that filters the underlying collection affecting the following methods: get, iterator, ceilingKey, higherKey, lowerKey, forEach, contains, and size.
    */
   def withFilterKeys(p: K => Boolean): NavigableMap[K, V] = new NavigableMap.KeyFilteredNavigableMap[K, V](this, p)
+
+  def ++[V1 >: V : ClassManifest](xs: GenTraversableOnce[(K, V1)]): NavigableMap[K, V1] =
+    ((repr: NavigableMap[K, V1]) /: xs.seq) (_ + _)
 
   override def stringPrefix = "NavigableMap"
 }

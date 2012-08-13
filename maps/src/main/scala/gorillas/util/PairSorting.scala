@@ -6,7 +6,7 @@ import annotation.tailrec
 
 /**
  * This object contains modified sorting algorithms specialized for pairs of arrays where the first vector contains
- * the keys to be sorted and the second array containes the values.  The relative position of each pair of elements is
+ * the keys to be sorted and the second array contains the values.  The relative position of each pair of elements is
  * kept after doing the sorting.
  * @author Ricardo Leon
  */

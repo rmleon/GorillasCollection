@@ -2,47 +2,59 @@ package gorillas.collection.immutable
 
 import annotation.tailrec
 import gorillas.collection.generic.KeyTransformation
-import collection.{IndexedSeqLike, GenTraversableOnce, SortedMap}
+import collection.{mutable, IndexedSeqLike, GenTraversableOnce, SortedMap}
 
 /**
  * Very fast access NavigableMap with low footprint.
  * Assumes that at least two elements are present.
  * All methods inherited from SortedMap have the same behavior as SortedMap.  However, it also holds the values under repeated keys.
- * TODO: Implement the methods to get all values under the same key.
  * @author Ricardo Leon
- * @param sortedKeys keys ordered according to "ordering"
- * @param sortedValues corresponding values sorted in the same order as the keys
- * @param ordering key ordering
- * @param key2int a transformation from key to int used to do fast lookups.  As much as possible, it should be equally spaced to make the lookup operations very fast.
  * @tparam K key type
  * @tparam V associated value type
  */
-final class SortedArrayMap[K, V](private[this] val sortedKeys: Array[K],
-  private[this] val sortedValues: Array[V])(implicit val ordering: Ordering[K],
-    protected[this] val key2int: KeyTransformation[K],
-    protected[this] val keyManifest: ClassManifest[K],
-    protected[this] val valueManifest: ClassManifest[V])
-  extends NavigableMap[K, V] {
+private[immutable] trait SortedArrayMap[K, V]
+{
+  /**
+   * sortedKeys keys ordered according to "ordering"
+   */
+  protected[this] val sortedKeys: Array[K]
+
+  /**
+   * sortedValues corresponding values sorted in the same order as the keys
+   */
+  protected[this] val sortedValues: Array[V]
+
+  implicit val ordering: Ordering[K]
+
+  /**
+   * a transformation from key to int used to do fast lookups.  As much as possible, it should be equally spaced to make the lookup operations very fast.
+   */
+  implicit protected[this] val key2int: KeyTransformation[K]
+
+  implicit protected[this] val keyManifest: ClassManifest[K]
+
+  implicit protected[this] val valueManifest: ClassManifest[V]
+
   assert(sortedKeys.length == sortedValues.length, "Keys and values should have the same size")
 
   /**
-   * Defining a private val that duplicates size allows me to avoids "invoke virtual" if I simply use "size".
+   * Defining a private val that duplicates size allows me to avoids "invoke virtual".
    */
-  private[this] val sizeInt: Int = sortedKeys.length
+  @inline protected[this] final val sizeInt: Int = sortedKeys.length
   assert(sizeInt > 1, "Empty or single maps should use a different implementation")
 
   /**
    * hintIdx operates using Long values.  Using this value instead of "size" saves an extra "i2l" and "invoke virtual" calls.
    */
-  private[this] val sizeLong: Long = sizeInt
+  private[this] final val sizeLong: Long = sizeInt
 
-  @inline private[this] def lowestKey = sortedKeys(0)
+  protected[this] final def lowestKey = sortedKeys(0)
 
-  @inline private[this] def highestKey = sortedKeys(sizeInt - 1)
+  protected[this] final def highestKey = sortedKeys(sizeInt - 1)
 
-  private[this] val lowestKeyLong: Long = key2int.transform(lowestKey)
+  private[this] final val lowestKeyLong: Long = key2int.transform(lowestKey)
 
-  private[this] val highestKeyLong: Long = key2int.transform(highestKey)
+  private[this] final val highestKeyLong: Long = key2int.transform(highestKey)
 
   assert(lowestKeyLong < highestKeyLong, "The entries should be sorted in ascending order (max:%d, min:%d, max:%s, min:%s)" format (highestKeyLong, lowestKeyLong, highestKey, lowestKey))
   // Note: to be able to handle duplicated keys, this would need to be assert(min <= max)
@@ -53,7 +65,7 @@ final class SortedArrayMap[K, V](private[this] val sortedKeys: Array[K],
   /**
    * Do not modify this array to keep this class immutable.
    */
-  private[this] val hints: Array[Int] = {
+  protected[this] final val hints: Array[Int] = {
     val result = Array.ofDim[Int](sizeInt + 1) // result(0) should be -1
     result(0) = -1
     var i = 0
@@ -75,7 +87,7 @@ final class SortedArrayMap[K, V](private[this] val sortedKeys: Array[K],
     result
   }
 
-  private[this] val duplicates = {
+  protected[this] val duplicates = {
     var result = 0
     var i = 1
     while (i < sortedKeys.length) {
@@ -85,149 +97,13 @@ final class SortedArrayMap[K, V](private[this] val sortedKeys: Array[K],
     result
   }
 
-  // -- Traversable/Iterable
-
-  override def foreach[U](f: ((K, V)) => U) {
-    var i = 0
-    while (i < sizeInt) {
-      while (i + 1 < sizeInt && sortedKeys(i) == sortedKeys(i + 1)) // Skip the duplicate keys
-        i += 1
-      f(sortedKeys(i) -> sortedValues(i))
-      i += 1
-    }
-  }
-
-  override def ++[V1 >: V : ClassManifest](xs: GenTraversableOnce[(K, V1)]): NavigableMap[K, V1] = {
-    val builder = NavigableMap.newBuilder[K, V1]
-    if (xs.isInstanceOf[IndexedSeqLike[_, _]])
-      builder.sizeHint(xs.size + sortedKeys.size)
-    builder ++= (sortedKeys, sortedValues, 0, sortedKeys.length)
-    builder ++= xs
-    builder result()
-  }
-
-  // ------- SortedMap and Map methods ------- //
-  override def size = sizeInt - duplicates
-
-  override def firstKey: K = lowestKey
-
-  override def lastKey: K = highestKey
-
-  final def iterator: Iterator[(K, V)] = new Iterator[(K, V)] {
-
-    private[this] var position = -1
-
-    @inline def hasNext: Boolean = position + 1 < sizeInt
-
-    def next(): (K, V) = {
-      if (!hasNext) {
-        throw new NoSuchElementException("next on empty iterator")
-      }
-      position += 1
-      while (position + 1 < sizeInt && sortedKeys(position) == sortedKeys(position + 1)) // This forces the iterator to get the last key
-        position += 1
-      (sortedKeys(position) -> sortedValues(position))
-    }
-  }
-
-  final def -(key: K) = {
-    if (!contains(key))
-      this
-    else {
-      val builder = NavigableMap.newBuilder[K, V]
-      builder.sizeHint(sizeInt - 1)
-      var i = 0
-      while (i < sizeInt) {
-        val currentKey = sortedKeys(i)
-        if (currentKey != key) {
-          builder += ((currentKey, sortedValues(i)))
-        }
-        i += 1
-      }
-      builder result ()
-    }
-  }
-
-  /**
-   * @param from bottom key limit (inclusive.)  None indicates no bound.
-   * @param until top key (exclusive.)  None indicates no limit.
-   * @return a new navigable map with the given range.
-   */
-  def rangeImpl(from: Option[K], until: Option[K]) = {
-    val lowerIndex = from match {
-      case None => 0
-      case Some(lower) =>
-        getClosestIndex(lower)
-    }
-    val higherIndex = until match {
-      case None => sizeInt
-      case Some(higher) =>
-        if (ordering.lt(highestKey, higher))
-          sizeInt
-        else {
-          var index = getClosestIndex(higher)
-          while (index >= 0 && ordering.gteq(sortedKeys(index), higher))
-            index -= 1
-          index + 1
-        }
-    }
-    if (lowerIndex == 0 && higherIndex == sizeInt)
-      this
-    else if (higherIndex < lowerIndex)
-      empty
-    else {
-      val builder = newBuilder
-      builder ++= (sortedKeys.slice(lowerIndex, higherIndex), sortedValues.slice(lowerIndex, higherIndex))
-      builder result ()
-    }
-  }
-
-  // ------- Navigable Methods ------- //
-  /**
-   * Create NavigableMaps if V1's ClassManifest is available
-   * @param kv new key value pair
-   * @tparam V1 new value type
-   * @return a new map with the element added
-   */
-  final def +[V1 >: V: ClassManifest](kv: (K, V1)): NavigableMap[K, V1] = {
-
-    var insertionIndex = getClosestIndex(kv._1)
-    while (insertionIndex < sizeInt && ordering.equiv(kv._1, sortedKeys(insertionIndex)))
-      insertionIndex += 1
-
-    val arrayInstanceOfV1 = sortedValues.asInstanceOf[Array[V1]]
-    val builder = NavigableMap.newBuilder[K, V1]
-    builder.sizeHint(sizeInt + 1)
-    builder ++= (sortedKeys, arrayInstanceOfV1, 0, insertionIndex) += kv ++= (sortedKeys, arrayInstanceOfV1, insertionIndex, sizeInt - insertionIndex)
-    builder result ()
-  }
-
-  def +[V1 >: V](kv: (K, V1)): SortedMap[K, V1] = {
-    val builder = SortedMap.newBuilder[K, V1]
-    builder.sizeHint(sizeInt + 1)
-    builder ++= iterator += kv
-    builder result ()
-  }
-
   /**
    * Note: The final keyword is redundant here (unlike "size" and "binarySearch").
    * @param key transformed key value
    * @return the index in the hints array where the "key" position might be located
    */
-  private[this] def hintIndex(key: Int): Int = (((key - lowestKeyLong) * sizeLong) / range).toInt
+  protected[this] final def hintIndex(key: Int): Int = (((key - lowestKeyLong) * sizeLong) / range).toInt
 
-  /**
-   * "Final" might seem redundant but it is not (I checked with javap).  "Final" allows extra optimization at the cost of inheritance..
-   */
-  final def get(key: K): Option[V] = {
-    val hintIdx = hintIndex(key2int.transform(key))
-    if (hintIdx < 0 || hintIdx >= sizeInt) // Out of range
-      None
-    else
-      binarySearch(key, hints(hintIdx), hints(hintIdx + 1)) // It turns out that inline parameters generate less bytecode
-  }
-
-  final override def contains(key: K) = get(key).isDefined
 
   // The code below saves 40ms for the Int case
   //  private[this] val comparator: util.Comparator[K] = new util.Comparator[K] {
@@ -346,13 +222,12 @@ final class SortedArrayMap[K, V](private[this] val sortedKeys: Array[K],
 
   /**
    * Lookup.
-   * Notes: @inline didn't see to have any effect.  Final might seem redundant but it is not (I checked with javap).
    * @param key lookup key
    * @param minIdx initial index in the range (exclusive).  To include the first element with index 0, pass -1.  Assertion: -1 <= minIdx <= maxIdx
    * @param maxIdx last index in the range (inclusive). Assertion: 0 <= maxIdx < length
    * @return the associated value if found
    */
-  @tailrec private[this] final def binarySearch(key: K, minIdx: Int, maxIdx: Int): Option[V] = {
+  @tailrec protected[this] final def binarySearch(key: K, minIdx: Int, maxIdx: Int): Option[V] = { // Notes: @inline didn't see to have any effect.  Final might seem redundant but it is not (I checked with javap).
     //    assert(minIdx <= maxIdx, "Error: minIdx <= maxIdx always")
     //    assert(maxIdx < length, "Error: maxIdx < length always")
     //    assert(minIdx >= -1, "Error: minIdx should be -1 or higher (-1 indicates that the first element could be index=0)")

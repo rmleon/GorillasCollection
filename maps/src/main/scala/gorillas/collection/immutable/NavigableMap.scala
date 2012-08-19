@@ -12,7 +12,7 @@ import gorillas.collection.mutable.NavigableMapBuilder
  * @tparam K key type
  * @tparam V value type
  */
-trait NavigableMap[K, +V] extends SortedMap[K, V] with SortedMapLike[K, V, NavigableMap[K, V]] with Immutable {
+trait NavigableMap[K, +V] extends NavigableMapLike[K, V] with SortedMap[K, V] with SortedMapLike[K, V, NavigableMap[K, V]] with Immutable {
 
   protected[this] implicit def key2int: KeyTransformation[K]
 
@@ -22,6 +22,9 @@ trait NavigableMap[K, +V] extends SortedMap[K, V] with SortedMapLike[K, V, Navig
 
   override protected[this] def newBuilder: NavigableMapBuilder[K, V] =
     NavigableMap.newBuilder[K, V]
+
+  protected[this] def newBuilder[V1 >: V: ClassManifest]: NavigableMapBuilder[K, V1] =
+    NavigableMap.newBuilder[K, V1]
 
   override def empty: NavigableMap[K, V] = NavigableMap.empty[K, V]
 
@@ -33,35 +36,6 @@ trait NavigableMap[K, +V] extends SortedMap[K, V] with SortedMapLike[K, V, Navig
    */
   def +[V1 >: V](kv: (K, V1))(implicit value1Manifest: ClassManifest[V1]): NavigableMap[K, V1]
 
-  /**
-   * @param key lookup key
-   * @return The greatest key less than or equal to the given key
-   */
-  def floorKey(key: K): Option[K]
-
-  /**
-   * @param key lookup key
-   * @return The least key strictly greater than the given key
-   */
-  def higherKey(key: K): Option[K]
-
-  /**
-   * @param key lookup key
-   * @return The least key greater than or equal to the given key
-   */
-  def ceilingKey(key: K): Option[K]
-
-  /**
-   * @param key lookup key
-   * @return The greatest key strictly less than the given key
-   */
-  def lowerKey(key: K): Option[K]
-
-  /**
-   * @return true if that is an instance of SortedMap (or NavigableMap)
-   */
-  override def canEqual(that: Any): Boolean = that.isInstanceOf[SortedMap[K, V]]
-
   def updated[V1 >: V: ClassManifest](key: K, value: V1): NavigableMap[K, V1] = this + ((key, value))
 
   /**
@@ -72,8 +46,8 @@ trait NavigableMap[K, +V] extends SortedMap[K, V] with SortedMapLike[K, V, Navig
    */
   def withFilterKeys(p: K => Boolean): NavigableMap[K, V] = new NavigableMap.KeyFilteredNavigableMap[K, V](this, p)
 
-  def ++[V1 >: V : ClassManifest](xs: GenTraversableOnce[(K, V1)]): NavigableMap[K, V1] =
-    ((repr: NavigableMap[K, V1]) /: xs.seq) (_ + _)
+  def ++[V1 >: V: ClassManifest](xs: GenTraversableOnce[(K, V1)]): NavigableMap[K, V1] =
+    ((repr: NavigableMap[K, V1]) /: xs.seq)(_ + _)
 
   override def stringPrefix = "NavigableMap"
 }

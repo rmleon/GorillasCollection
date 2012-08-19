@@ -20,7 +20,7 @@ object PairSorting {
    * @tparam V values type
    */
   def quickSort[K: Ordering, V](ks: Array[K], vs: Array[V]) {
-    threeWayQuickSort[K, V](ks, vs, 0, ks.size - 1)
+    threeWayQuickSort[K, V](ks, vs, 0, ks.length - 1)
   }
 
   private[this] val rand = new Random
@@ -49,7 +49,7 @@ object PairSorting {
         vs(y) = vs(x)
         vs(x) = tempV
       }
-      //assert(n < ks.size)
+      //assert(n < ks.length)
       // choose pivot (swap)
       // swap a[n,rand(1,n)]
       val tempIndex = rand.nextInt(high + 1 - low) + low // this seems to be working but it can be improved by selecting the median of the highest, middle, and lowest keys

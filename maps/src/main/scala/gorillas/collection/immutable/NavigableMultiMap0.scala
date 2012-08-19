@@ -1,26 +1,26 @@
 package gorillas.collection.immutable
 
 import gorillas.collection.generic.KeyTransformation
-import collection.immutable.{ Seq, SortedSet }
-import scala.collection.SortedMap
+import collection.immutable.{ SortedSet, Seq }
+import collection.SortedMap
 
-/**
- * Empty map.
- * @author Ricardo Leon
- * @param ordering key ordering used to build new maps.
- * @param key2int key transformation used to build new maps.
- * @tparam K key type
- * @tparam V value type
- */
-private[immutable] final class NavigableMap0[K, +V](implicit val ordering: Ordering[K],
+private[immutable] final class NavigableMultiMap0[K, +V](implicit val ordering: Ordering[K],
   protected[this] val key2int: KeyTransformation[K],
   protected[this] val keyManifest: ClassManifest[K],
   protected[this] val valueManifest: ClassManifest[V])
-  extends NavigableMap[K, V] {
+  extends NavigableMultiMap[K, V] {
 
   override def size = 0
 
   def get(key: K) = None
+
+  def flat: (Iterable[K], Iterable[V]) = (Iterable.empty -> Iterable.empty)
+
+  def flatEntriesIterable = Iterable.empty
+
+  def flatIterable = Iterable.empty
+
+  def totalSize: Int = 0
 
   def floorKey(key: K) = None
 
@@ -34,7 +34,7 @@ private[immutable] final class NavigableMap0[K, +V](implicit val ordering: Order
 
   override def isEmpty = true
 
-  override def keysIterator = Iterator.empty
+  override def keysIterator: Iterator[K] = Iterator.empty
 
   override def contains(key: K) = false
 
@@ -44,17 +44,15 @@ private[immutable] final class NavigableMap0[K, +V](implicit val ordering: Order
 
   override def toIterator = Iterator.empty
 
-  override def count(p: ((K, V)) => Boolean) = 0
+  def contains[V1 >: V](k: K, v: V1): Boolean = false
 
   def iterator = Iterator.empty
 
   def -(key: K) = this
 
-  def +[V1 >: V: ClassManifest](kv: (K, V1)): NavigableMap[K, V1] = NavigableMap(kv)
-
-  def +[V1 >: V](kv: (K, V1)): SortedMap[K, V1] = SortedMap(kv)
+  def +[V1 >: Seq[V]](kv: (K, V1)): SortedMap[K, V1] = SortedMap(kv)
 
   def rangeImpl(from: Option[K], until: Option[K]) = this
 
-  override def toString() = "NavigableMap()"
+  override def toString() = "NavigableMultiMap()"
 }

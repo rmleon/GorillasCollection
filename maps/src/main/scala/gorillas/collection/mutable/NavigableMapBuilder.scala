@@ -1,10 +1,10 @@
 package gorillas.collection.mutable
 
-import gorillas.collection.immutable.{SortedArrayNavigableMap, SortedArrayMap, NavigableMap}
+import gorillas.collection.immutable.{ SortedArrayNavigableMap, NavigableMap }
 import gorillas.util.PairSorting
 import gorillas.collection.generic.KeyTransformation
-import collection.{ GenTraversableOnce, IndexedSeqLike, mutable }
-import compat.Platform
+import collection.{ GenTraversableOnce, mutable }
+
 
 /**
  * @author Ricardo Leon

@@ -2,7 +2,6 @@ package gorillas.collection.immutable
 
 import annotation.tailrec
 import gorillas.collection.generic.KeyTransformation
-import collection.{mutable, IndexedSeqLike, GenTraversableOnce, SortedMap}
 
 /**
  * Very fast access NavigableMap with low footprint.
@@ -12,8 +11,7 @@ import collection.{mutable, IndexedSeqLike, GenTraversableOnce, SortedMap}
  * @tparam K key type
  * @tparam V associated value type
  */
-private[immutable] trait SortedArrayMap[K, V]
-{
+private[immutable] trait SortedArrayMap[K, V] {
   /**
    * sortedKeys keys ordered according to "ordering"
    */
@@ -103,7 +101,6 @@ private[immutable] trait SortedArrayMap[K, V]
    * @return the index in the hints array where the "key" position might be located
    */
   protected[this] final def hintIndex(key: Int): Int = (((key - lowestKeyLong) * sizeLong) / range).toInt
-
 
   // The code below saves 40ms for the Int case
   //  private[this] val comparator: util.Comparator[K] = new util.Comparator[K] {

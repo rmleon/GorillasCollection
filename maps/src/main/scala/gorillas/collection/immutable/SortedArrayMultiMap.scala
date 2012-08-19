@@ -1,6 +1,5 @@
 package gorillas.collection.immutable
 
-import java.awt.RenderingHints.Key
 import gorillas.collection.generic.KeyTransformation
 import collection.immutable.Seq
 import collection.SortedMap
@@ -13,10 +12,10 @@ import collection.SortedMap
  * To change this template use File | Settings | File Templates.
  */
 class SortedArrayMultiMap[K, V](protected[this] val sortedKeys: Array[K],
-                                protected[this] val sortedValues: Array[V])(implicit val ordering: Ordering[K],
-                                                                            protected[this] val key2int: KeyTransformation[K],
-                                                                            protected[this] val keyManifest: ClassManifest[K],
-                                                                            protected[this] val valueManifest: ClassManifest[V])
+  protected[this] val sortedValues: Array[V])(implicit val ordering: Ordering[K],
+    protected[this] val key2int: KeyTransformation[K],
+    protected[this] val keyManifest: ClassManifest[K],
+    protected[this] val valueManifest: ClassManifest[V])
   extends NavigableMultiMap[K, V] with SortedArrayMap[K, V] {
 
   def -(key: K): NavigableMultiMap[K, V] = null

@@ -1,7 +1,7 @@
 package gorillas.collection.mutable
 
 import gorillas.collection.generic.KeyTransformation
-import gorillas.collection.immutable.{SortedArrayMultiMap, NavigableMultiMap}
+import gorillas.collection.immutable.{ SortedArrayMultiMap, NavigableMultiMap }
 import collection.IndexedSeqLike
 import collection.immutable.Seq
 import gorillas.util.PairSorting
@@ -28,13 +28,12 @@ final class NavigableMultiMapBuilder[K, V](implicit ordering: Ordering[K], key2i
     values.sizeHint(size)
   }
 
-
   def +=(elem: (K, Seq[V])): NavigableMultiMapBuilder.this.type = {
     val newValues = elem._2
     if (newValues.isInstanceOf[IndexedSeqLike[_, _]])
       sizeHint(newValues.size + keys.size + 1)
 
-    newValues.foreach[Unit]{
+    newValues.foreach[Unit] {
       v: V =>
         keys += elem._1
         values += (v)

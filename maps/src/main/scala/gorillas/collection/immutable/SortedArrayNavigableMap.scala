@@ -1,15 +1,13 @@
 package gorillas.collection.immutable
 
 import gorillas.collection.generic.KeyTransformation
-import collection.{SortedMap, IndexedSeqLike, GenTraversableOnce}
-import gorillas.collection.mutable.NavigableMapBuilder
+import collection.{ SortedMap, IndexedSeqLike, GenTraversableOnce }
 
 final class SortedArrayNavigableMap[K, V](protected[this] val sortedKeys: Array[K],
-                                          protected[this] val sortedValues: Array[V])
-                                         (implicit val ordering: Ordering[K],
-                                          protected[this] val key2int: KeyTransformation[K],
-                                          protected[this] val keyManifest: ClassManifest[K],
-                                          protected[this] val valueManifest: ClassManifest[V])
+  protected[this] val sortedValues: Array[V])(implicit val ordering: Ordering[K],
+    protected[this] val key2int: KeyTransformation[K],
+    protected[this] val keyManifest: ClassManifest[K],
+    protected[this] val valueManifest: ClassManifest[V])
   extends NavigableMap[K, V] with SortedArrayMap[K, V] {
 
   final def iterator: Iterator[(K, V)] = new Iterator[(K, V)] {
@@ -42,7 +40,7 @@ final class SortedArrayNavigableMap[K, V](protected[this] val sortedKeys: Array[
   }
 
   override def ++[V1 >: V: ClassManifest](xs: GenTraversableOnce[(K, V1)]): NavigableMap[K, V1] = {
-    val builder = NavigableMap.newBuilder[K, V1]
+    val builder = newBuilder[V1]
     if (xs.isInstanceOf[IndexedSeqLike[_, _]])
       builder.sizeHint(xs.size + sortedKeys.length)
     builder ++= (sortedKeys, sortedValues, 0, sortedKeys.length)
@@ -54,7 +52,7 @@ final class SortedArrayNavigableMap[K, V](protected[this] val sortedKeys: Array[
     if (!contains(key))
       this
     else {
-      val builder = newBuilder
+      val builder = newBuilder[V]
       builder.sizeHint(sizeInt - 1)
       var i = 0
       while (i < sizeInt) {
@@ -96,7 +94,7 @@ final class SortedArrayNavigableMap[K, V](protected[this] val sortedKeys: Array[
     else if (higherIndex < lowerIndex)
       empty
     else {
-      val builder = newBuilder
+      val builder = newBuilder[V]
       builder ++= (sortedKeys.slice(lowerIndex, higherIndex), sortedValues.slice(lowerIndex, higherIndex))
       builder result ()
     }
@@ -145,6 +143,5 @@ final class SortedArrayNavigableMap[K, V](protected[this] val sortedKeys: Array[
   override def firstKey: K = lowestKey
 
   override def lastKey: K = highestKey
-
 
 }

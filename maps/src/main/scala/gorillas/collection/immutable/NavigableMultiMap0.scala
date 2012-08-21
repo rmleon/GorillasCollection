@@ -14,11 +14,9 @@ private[immutable] final class NavigableMultiMap0[K, +V](implicit val ordering: 
 
   def get(key: K) = None
 
-  def flat: (Iterable[K], Iterable[V]) = (Iterable.empty -> Iterable.empty)
+  def flat: (Iterator[K], Iterator[V]) = (Iterator.empty -> Iterator.empty)
 
-  def flatEntriesIterable = Iterable.empty
-
-  def flatIterable = Iterable.empty
+  def flatEntries: Iterator[(K, V)] = Iterator.empty
 
   def totalSize: Int = 0
 

@@ -5,11 +5,16 @@ import collection.immutable.Seq
 import collection.SortedMap
 
 /**
- * Created with IntelliJ IDEA.
- * User: rleon
- * Date: 8/18/12
- * Time: 6:54 PM
- * To change this template use File | Settings | File Templates.
+ *
+ * @param sortedKeys input array with the sorted keys.  The builder discards this array; it should never be modified.
+ * @param sortedValues values sorted in the same order as the keys.  Again, the builder discards this array so that it can never be modified.
+ * @param ordering key ordering
+ * @param key2int a transformation to integer to enable quick lookups
+ * @param keyManifest to create key arrays
+ * @param valueManifest to create value arrays
+ * @tparam K key type
+ * @tparam V associated value type
+ * @author Ricardo Leon
  */
 class SortedArrayMultiMap[K, V](protected[this] val sortedKeys: Array[K],
   protected[this] val sortedValues: Array[V])(implicit val ordering: Ordering[K],
@@ -18,24 +23,28 @@ class SortedArrayMultiMap[K, V](protected[this] val sortedKeys: Array[K],
     protected[this] val valueManifest: ClassManifest[V])
   extends NavigableMultiMap[K, V] with SortedArrayMap[K, V] {
 
+  // TODO
   def -(key: K): NavigableMultiMap[K, V] = null
 
+  // TODO
   def get(key: K): Option[Seq[V]] = null
 
+  // TODO
   def iterator: Iterator[(K, Seq[V])] = null
 
+  // TODO
   def contains[V1 >: V](k: K, v: V1): Boolean = false
 
-  def flat: (Iterable[K], Iterable[V]) = null
+  // TODO  (create a class for the arrays)
+  def flat = null
 
-  def flatEntriesIterable: Iterable[(K, V)] = null
-
-  def flatIterable: Iterable[V] = null
-
+  // TODO
   def totalSize: Int = 0
 
+  // TODO
   def +[B1 >: Seq[V]](kv: (K, B1)): SortedMap[K, B1] = null
 
+  // TODO
   def rangeImpl(from: Option[K], until: Option[K]): NavigableMultiMap[K, V] = null
 
   // ------- SortedMap and Map methods ------- //

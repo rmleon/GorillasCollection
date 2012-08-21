@@ -25,11 +25,9 @@ private[immutable] final class NavigableMultiMap1[K, +V](private[this] val k: K,
 
   private[this] val keyOption = Some(k)
 
-  def flat: (Seq[K], Seq[V]) = (Seq(k) -> Seq(v))
+  def flat = (Iterator.single(k) -> Iterator.single(v))
 
-  def flatEntriesIterable = Iterable(k -> v)
-
-  def flatIterable = Iterable(v)
+  def flatEntries: Iterator[(K, V)] = Iterator.single(k -> v)
 
   def totalSize = 1
 

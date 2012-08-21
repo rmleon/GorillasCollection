@@ -25,19 +25,14 @@ trait NavigableMultiMap[K, +V] extends NavigableMapLike[K, Seq[V]] with SortedMa
   override def empty: NavigableMultiMap[K, V] = NavigableMultiMap.empty[K, V]
 
   /**
-   * @return all values sorted by the key.  The insertion order is kept within for values with the same key.
-   */
-  def flatIterable: Iterable[V]
-
-  /**
    * @return all entries sorted by the key.  The insertion order is kept within for values with the same key.
    */
-  def flatEntriesIterable: Iterable[(K, V)]
+  def flatEntries: Iterator[(K, V)]
 
   /**
    * @return unzipped keys and values sorted by the key.  The insertion order is kept within for values with the same key.
    */
-  def flat: (Iterable[K], Iterable[V])
+  def flat: (Iterator[K], Iterator[V])
 
   def contains[V1 >: V](k: K, v: V1): Boolean
 

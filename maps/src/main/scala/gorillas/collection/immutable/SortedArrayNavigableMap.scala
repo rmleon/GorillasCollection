@@ -10,22 +10,7 @@ final class SortedArrayNavigableMap[K, V](protected[this] val sortedKeys: Array[
     protected[this] val valueManifest: ClassManifest[V])
   extends NavigableMap[K, V] with SortedArrayMap[K, V] {
 
-  final def iterator: Iterator[(K, V)] = new Iterator[(K, V)] {
-
-    private[this] var position = -1
-
-    @inline def hasNext: Boolean = position + 1 < sizeInt
-
-    def next(): (K, V) = {
-      if (!hasNext) {
-        throw new NoSuchElementException("next on empty iterator")
-      }
-      position += 1
-      while (position + 1 < sizeInt && sortedKeys(position) == sortedKeys(position + 1)) // This forces the iterator to get the last key
-        position += 1
-      (sortedKeys(position) -> sortedValues(position))
-    }
-  }
+  final def iterator: Iterator[(K, V)] = flatEntries
 
   // -- Traversable/Iterable
 

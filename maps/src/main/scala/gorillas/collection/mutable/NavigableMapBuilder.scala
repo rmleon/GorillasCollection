@@ -5,7 +5,6 @@ import gorillas.util.PairSorting
 import gorillas.collection.generic.KeyTransformation
 import collection.{ GenTraversableOnce, mutable }
 
-
 /**
  * @author Ricardo Leon
  * @param ordering self explanatory

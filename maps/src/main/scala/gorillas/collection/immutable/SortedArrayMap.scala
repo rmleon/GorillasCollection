@@ -285,4 +285,21 @@ private[immutable] trait SortedArrayMap[K, V] {
     } else
       -1
   }
+
+  final def flatEntries = new Iterator[(K, V)] {
+
+    private[this] var position = -1
+
+    @inline def hasNext: Boolean = position + 1 < sizeInt
+
+    def next(): (K, V) = {
+      if (!hasNext) {
+        throw new NoSuchElementException("next on empty iterator")
+      }
+      position += 1
+      while (position + 1 < sizeInt && sortedKeys(position) == sortedKeys(position + 1)) // This forces the iterator to get the last key
+        position += 1
+      (sortedKeys(position) -> sortedValues(position))
+    }
+  }
 }

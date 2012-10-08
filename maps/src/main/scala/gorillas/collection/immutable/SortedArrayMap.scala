@@ -96,11 +96,10 @@ private[immutable] trait SortedArrayMap[K, V] {
   }
 
   /**
-   * Note: The final keyword is redundant here (unlike "size" and "binarySearch").
    * @param key transformed key value
    * @return the index in the hints array where the "key" position might be located
    */
-  protected[this] final def hintIndex(key: Int): Int = (((key - lowestKeyLong) * sizeLong) / range).toInt
+  protected[this] final def hintIndex(key: Int): Int = (((key - lowestKeyLong) * sizeLong) / range).toInt // The final keyword is redundant here (unlike "size" and "binarySearch").
 
   // The code below saves 40ms for the Int case
   //  private[this] val comparator: util.Comparator[K] = new util.Comparator[K] {
@@ -135,7 +134,7 @@ private[immutable] trait SortedArrayMap[K, V] {
       Some(lowestKey)
     else {
       var index = binarySearchClosest(key, hints(hintIdx), hints(hintIdx + 1))
-      while (ordering.gteq(key, sortedKeys(index)))
+      while (ordering.gteq(key, sortedKeys(index))) // this can be optimized
         index += 1
       Some(sortedKeys(index))
     }
@@ -153,7 +152,7 @@ private[immutable] trait SortedArrayMap[K, V] {
       None
     else {
       var index = binarySearchClosest(key, hints(hintIdx), hints(hintIdx + 1))
-      while (ordering.lteq(key, sortedKeys(index)))
+      while (ordering.lteq(key, sortedKeys(index))) // this can be optimized
         index -= 1
       Some(sortedKeys(index))
     }
@@ -171,7 +170,7 @@ private[immutable] trait SortedArrayMap[K, V] {
       Some(lowestKey)
     else {
       var index = binarySearchClosest(key, hints(hintIdx), hints(hintIdx + 1))
-      while (ordering.gt(key, sortedKeys(index)))
+      while (ordering.gt(key, sortedKeys(index))) // this can be optimized
         index += 1
       Some(sortedKeys(index))
     }
@@ -189,7 +188,7 @@ private[immutable] trait SortedArrayMap[K, V] {
       None
     else {
       var index = binarySearchClosest(key, hints(hintIdx), hints(hintIdx + 1))
-      while (ordering.lt(key, sortedKeys(index)))
+      while (ordering.lt(key, sortedKeys(index))) // this can be optimized
         index -= 1
       Some(sortedKeys(index))
     }

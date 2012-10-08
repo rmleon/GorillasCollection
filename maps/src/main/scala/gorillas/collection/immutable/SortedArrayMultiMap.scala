@@ -27,7 +27,13 @@ class SortedArrayMultiMap[K, V](protected[this] val sortedKeys: Array[K],
   def -(key: K): NavigableMultiMap[K, V] = null
 
   // TODO
-  def get(key: K): Option[Seq[V]] = null
+  final def get(key: K): Option[Seq[V]] = {
+  val hintIdx = hintIndex(key2int.transform(key))
+    if (hintIdx < 0 || hintIdx >= sizeInt) // Out of range
+      None
+    else
+      binarySearch(key, hints(hintIdx), hints(hintIdx + 1)) // It turns out that inline parameters generate less bytecode
+  }
 
   // TODO
   def iterator: Iterator[(K, Seq[V])] = null
@@ -39,7 +45,7 @@ class SortedArrayMultiMap[K, V](protected[this] val sortedKeys: Array[K],
   def flat = null
 
   // TODO
-  def totalSize: Int = 0
+  def totalSize: Int = sizeInt
 
   // TODO
   def +[B1 >: Seq[V]](kv: (K, B1)): SortedMap[K, B1] = null

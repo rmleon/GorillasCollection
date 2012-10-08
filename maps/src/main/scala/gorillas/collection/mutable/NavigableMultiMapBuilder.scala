@@ -41,7 +41,6 @@ final class NavigableMultiMapBuilder[K, V](implicit ordering: Ordering[K], key2i
     this
   }
 
-  // @TODO
   def result(): NavigableMultiMap[K, V] = {
     keys.size match {
       case 0 => NavigableMultiMap.empty[K, V]

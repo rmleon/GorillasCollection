@@ -37,7 +37,7 @@ trait NavigableMultiMap[K, +V] extends NavigableMapLike[K, Seq[V]] with SortedMa
   def contains[V1 >: V](k: K, v: V1): Boolean
 
   /**
-   * @return Number of all values (including duplicates)
+   * @return Number of all values inside the collections
    */
   def totalSize: Int
 

@@ -11,7 +11,7 @@ Goals
 3. Easy to manipulate for quick computations
 4. No dependencies on other libraries except Scala's and Java's standard API
 
-The code has been optimized by looking at the javap output after compilation and by running mico-benchmarks.  Don't expect a pure functional implementation as a result.
+The code has been optimized by looking at the javap output after compilation and by running mico-benchmarks.  Don't expect a pure functional implementation.
 
 Collections
 -----------
